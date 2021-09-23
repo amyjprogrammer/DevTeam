@@ -8,11 +8,16 @@ namespace DevTeams_Repository
 {
     public class Developer
     {
-        //need name, id numbers, bool Pluralsight
-
+        public Developer() { }
+        public Developer(string firstName, string lastName, int idNumber, bool pluralsight)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            IdNumber = idNumber;
+            Pluralsight = pluralsight;
+        }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
         public string FullName
         {
             get
@@ -21,8 +26,7 @@ namespace DevTeams_Repository
                 return fullName;
             }
         }
-
-        public int IDNumber { get; set; }
+        public int IdNumber { get; set; }
         public bool Pluralsight { get; set; }
     }
 }

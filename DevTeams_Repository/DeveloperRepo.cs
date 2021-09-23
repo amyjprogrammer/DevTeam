@@ -8,10 +8,56 @@ namespace DevTeams_Repository
 {
     public class DeveloperRepo
     {
-        //Crud functionality
-        //check that the ID is unique or are we assigning the ID?
-        //Include an option to look at all Developers
-        //Include an option to look for one Developer by ID
-        //Include an option to look at specific teams
+        protected readonly List<Developer> _developerList = new List<Developer>();
+        public void AddDeveloperToList(Developer developerInfo)
+        {
+            _developerList.Add(developerInfo);
+        }
+        public List<Developer> GetAllDeveloperInfo()
+        {
+            return _developerList;
+        }
+        public Developer GetDeveloperById(int developerId)
+        {
+            foreach (Developer devInfo in _developerList)
+            {
+                if(devInfo.IdNumber == developerId)
+                {
+                    return devInfo;
+                }
+            }
+            return null;
+        }
+        public Developer GetDeveloperByFullName(string fullName)
+        {
+            foreach (Developer devInfo in _developerList)
+            {
+                if (devInfo.FullName == fullName)
+                {
+                    return devInfo;
+                }
+            }
+            return null;
+        }
+        public bool UpdateExistingDevContent(Developer existingDevContent, Developer newDevContent)
+        {
+            if(existingDevContent != null)
+            {
+                existingDevContent.FirstName = newDevContent.FirstName;
+                existingDevContent.LastName = newDevContent.LastName;
+                existingDevContent.IdNumber = newDevContent.IdNumber;
+                existingDevContent.Pluralsight = newDevContent.Pluralsight;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool DeleteDevContent(Developer existingDevContent)
+        {
+            bool result = _developerList.Remove(existingDevContent);
+            return result;
+        } 
     }
 }
