@@ -8,7 +8,43 @@ namespace DevTeams_Repository
 {
     public class DevTeamRepo
     {
-        //show all teams
-        //Include an option to look at specific teams
+        protected readonly List<DevTeam> _contentDevTeam = new List<DevTeam>();
+        public void AddDevTeamContentToDirectory(DevTeam devTeamInfo)
+        {
+            _contentDevTeam.Add(devTeamInfo);
+        }
+        public List<DevTeam> GetAllDevTeams()
+        {
+            return _contentDevTeam;
+        }
+        public DevTeam GetOnlyOneDevTeam(int specificDevTeamNum)
+        {
+            foreach (DevTeam devTeamContent in _contentDevTeam)
+            {
+                if(devTeamContent.TeamId == specificDevTeamNum)
+                {
+                    return devTeamContent;
+                }
+            }
+            return null;
+        }
+        public bool UpdatingDevTeamInfo(DevTeam existingDevTeamInfo, DevTeam newDevTeamInfo)
+        {
+            if(existingDevTeamInfo != null)
+            {
+                existingDevTeamInfo.TeamId = newDevTeamInfo.TeamId;
+                existingDevTeamInfo.TeamName = newDevTeamInfo.TeamName;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool DeleteDevTeam(DevTeam existingDevTeamInfo)
+        {
+            bool result = _contentDevTeam.Remove(existingDevTeamInfo);
+            return result;
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace DevTeams_Repository
         {
             get
             {
-                string fullName = FirstName + LastName;
+                string fullName = FirstName + " " + LastName;
                 return fullName;
             }
         }

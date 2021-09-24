@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace DevTeams_Repository
 {
-    public enum TeamName  {TeamOne, TeamTwo, TeamThree}
     public class DevTeam 
     {
-        //the developers on the team, team name and team id
-
-        public TeamName NameOfTeam { get; set; }
-        public int TeamID { get; set; }
+        public DevTeam() { }
+        public DevTeam(string teamName, int teamId)
+        {
+            TeamName = teamName;
+            TeamId = teamId;
+        }
+        public string TeamName { get; set; }
+        public int TeamId { get; set; }
     }
 }
