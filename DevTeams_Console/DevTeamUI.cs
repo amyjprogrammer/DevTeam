@@ -13,13 +13,45 @@ namespace DevTeams_Console
         private DevTeamRepo _devTeamRepo = new DevTeamRepo();
         public void Run()
         {
-            RunMenu();
+            RunMenu(true);
         }
         //check that the ID is unique or are we assigning the ID?
-        private void RunMenu()
+        private void RunMenu(bool isRunning)
         {
-            bool isRunning = true;
             while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine
+                    (
+                        "Enter the number of your selection:\n" +
+                        "1. Show Developer Options\n" +
+                        "2. Show Developer Team Options\n" +
+                        "3. Exit"
+                    );
+                string userInput = Console.ReadLine();
+                switch (userInput)
+                {
+                    case "1":
+                        DeveloperMenu();
+                        break;
+                    case "2":
+                        DevTeamMenu();
+                        break;
+                    case "3":
+                        isRunning = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a valid number between 1-3.\n" +
+                            "Press any key to continue...");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+        private void DeveloperMenu()
+        {
+            bool isDevRunning = true;
+            while (isDevRunning)
             {
                 Console.Clear();
                 Console.WriteLine
@@ -28,13 +60,9 @@ namespace DevTeams_Console
                         "1. Show all Developers\n" +
                         "2. Add new Developer\n" +
                         "3. Edit Developer Information\n" +
-                        "4. Delete Developer\n" +
-                        "5. Show all Developer Teams\n" +
-                        "6. Add new Developer Team\n" +
-                        "7. Edit Developer Team\n" +
-                        "8. Delete Developer Teams\n" +
-                        "9. Developers with Pluralsight license\n" +
-                        "10. Exit"
+                        "4. Remove Developer\n" +
+                        "5. Developers with Pluralsight license\n" +
+                        "6. Main Menu"
                     );
                 string userInput = Console.ReadLine();
                 switch (userInput)
@@ -52,25 +80,57 @@ namespace DevTeams_Console
                         RemoveEmployeeById();
                         break;
                     case "5":
-                        ShowAllDevTeams();
-                        break;
-                    case "6":
-                        AddDevTeams();
-                        break;
-                    case "7":
-                        UpdateDevTeamById();
-                        break;
-                    case "8":
-                        RemoveDevTeamById();
-                        break;
-                    case "9":
                         DevelopersWithPluralsight();
                         break;
-                    case "10":
-                        isRunning = false;
+                    case "6":
+                        isDevRunning = false;
+                        RunMenu(false);
                         break;
                     default:
-                        Console.WriteLine("Please enter a valid number between 1-9.\n" +
+                        Console.WriteLine("Please enter a valid number between 1-6.\n" +
+                            "Press any key to continue...");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+
+        }
+        private void DevTeamMenu()
+        {
+            bool isDevTeamRunning = true;
+            while (isDevTeamRunning)
+            {
+                Console.Clear();
+                Console.WriteLine
+                    (
+                        "Enter the number of your selection:\n" +
+                        "1. Show all Developer Teams\n" +
+                        "2. Add new Developer Team\n" +
+                        "3. Edit Developer Team\n" +
+                        "4. Delete Developer Teams\n" +
+                        "5. Main Menu"
+                    );
+                string userInput = Console.ReadLine();
+                switch (userInput)
+                {
+                    case "1":
+                        ShowAllDevTeams();
+                        break;
+                    case "2":
+                        AddDevTeams();
+                        break;
+                    case "3":
+                        UpdateDevTeamById();
+                        break;
+                    case "4":
+                        RemoveDevTeamById();
+                        break;
+                    case "5":
+                        isDevTeamRunning = false;
+                        RunMenu(false);
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a valid number between 1-5.\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
                         break;
@@ -98,9 +158,7 @@ namespace DevTeams_Console
                 Console.WriteLine("Does this employee have Pluralsight access?");
                 Console.Write("Answer true or false: ");
                 string userAnswer = Console.ReadLine().ToLower();
-                CheckUserAnswerForTrueOrFalse(userAnswer);
-                bool convertUserAnswer = Convert.ToBoolean(userAnswer);
-                createDev.Pluralsight = convertUserAnswer;
+                createDev.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
                 _developerRepo.AddDeveloperToList(createDev);
                 Console.Clear();
                 DisplayDeveloperInfo(createDev);
@@ -159,9 +217,7 @@ namespace DevTeams_Console
                 Console.WriteLine($"Do they have access to Pluralsight: {existingDevContent.Pluralsight}\n");
                 Console.Write("Please enter either true or false: ");
                 string userAnswer = Console.ReadLine().ToLower();
-                CheckUserAnswerForTrueOrFalse(userAnswer);
-                bool convertUserAnswer = Convert.ToBoolean(userAnswer);
-                updateDevContent.Pluralsight = convertUserAnswer;
+                updateDevContent.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
                 if (_developerRepo.UpdateExistingDevContent(existingDevContent, updateDevContent))
                 {
                     Console.Clear();
@@ -382,13 +438,15 @@ namespace DevTeams_Console
                 index++;
             }
         }
-        private void CheckUserAnswerForTrueOrFalse(string userAnswer)
+        private bool CheckUserAnswerForTrueOrFalse(string userAnswer)
         {
             while (userAnswer != "true" && userAnswer != "false")
             {
                 Console.WriteLine("Please enter either true or false: ");
                 userAnswer = Console.ReadLine().ToLower();
             }
+            bool convertUserAnswer = Convert.ToBoolean(userAnswer);
+            return convertUserAnswer;
         }
         private void DisplayAllDevTeams()
         {
