@@ -49,6 +49,7 @@ namespace DevTeams_Console
                         UpdateEmployeeById();
                         break;
                     case "4":
+                        RemoveEmployeeById();
                         break;
                     case "5":
                         break;
@@ -59,6 +60,7 @@ namespace DevTeams_Console
                     case "8":
                         break;
                     case "9":
+                        DevelopersWithPluralsight();
                         break;
                     case "10":
                         isRunning = false;
@@ -127,7 +129,6 @@ namespace DevTeams_Console
             bool updateEmployee = true;
             while (updateEmployee)
             {
-
                 Console.Clear();
                 DisplayAllDeveloperInfo();
                 Console.Write("\n\nPlease enter the Id number for the Employee you would like to update: ");
@@ -150,6 +151,7 @@ namespace DevTeams_Console
                 Console.Write("Please enter the new Id Number: ");
                 int idInfo = Convert.ToInt32(Console.ReadLine());
                 updateDevContent.IdNumber = idInfo;
+                /* check for unique id*/
                 Console.WriteLine($"Do they have access to Pluralsight: {existingDevContent.Pluralsight}\n");
                 Console.Write("Please enter either true or false: ");
                 string userAnswer = Console.ReadLine().ToLower();
@@ -183,13 +185,65 @@ namespace DevTeams_Console
             }
             PauseProgram();
         }
+        private void RemoveEmployeeById()
+        {
+            bool removeEmployee = true;
+            while (removeEmployee)
+            {
+                Console.Clear();
+                DisplayAllDeveloperInfo();
+                Console.Write("\n\nPlease enter the Id number for the Employee you would like to remove: ");
+                int userInputEmployeeId = Convert.ToInt32(Console.ReadLine());
+                Developer existingDevContent = _developerRepo.GetDeveloperById(userInputEmployeeId);
+                if (existingDevContent == null)
+                {
+                    Console.WriteLine("We are not able to find that Employee Id.");
+                    PauseProgram();
+                    return;
+                }
+                _developerRepo.DeleteDevContent(existingDevContent);
+                DisplayDeveloperInfo(existingDevContent);
+                Console.WriteLine("This developer was removed.");
+                Console.WriteLine("\nWould you like to remove another Developer? [Y or N]");
+                string answer = Console.ReadLine().ToUpper();
+                if (answer == "Y")
+                {
+                    continue;
+                }
+                else if (answer == "N")
+                {
+                    removeEmployee = false;
+                }
+                else
+                {
+                    removeEmployee = false;
+                }
+            }
+            PauseProgram();
+        }
+        private void DevelopersWithPluralsight()
+        {
+            Console.Clear();
+            Console.WriteLine("A list of Employees with a Pluralsight license:\n");
+            List<Developer> listOfAllDevelopers = _developerRepo.GetAllDeveloperInfo();
+            int index = 1;
+            foreach (Developer devContent in listOfAllDevelopers)
+            {
+                if (devContent.Pluralsight == true)
+                {
+                    Console.WriteLine($"{index}. {devContent.FullName}: Id- {devContent.IdNumber}");
+                    index++;
+                }
+            }
+            PauseProgram();
+        }
         private void DisplayDeveloperInfo(Developer devContent)
         {
             Console.WriteLine($"{devContent.FullName}- Id: {devContent.IdNumber}");
         }
         private void PauseProgram()
         {
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine("\nPress any key to continue...");
             Console.ReadKey();
         }
         private void DisplayAllDeveloperInfo()
@@ -210,6 +264,5 @@ namespace DevTeams_Console
                 userAnswer = Console.ReadLine().ToLower();
             }
         }
-        
     }
 }
