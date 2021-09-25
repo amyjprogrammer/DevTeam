@@ -93,7 +93,6 @@ namespace DevTeams_Console
                         break;
                 }
             }
-
         }
         private void DevTeamMenu()
         {
@@ -261,9 +260,26 @@ namespace DevTeams_Console
                     PauseProgram();
                     return;
                 }
-                _developerRepo.DeleteDevContent(existingDevContent);
-                DisplayDeveloperInfo(existingDevContent);
-                Console.WriteLine("This developer was removed.");
+                Console.WriteLine($"Are you sure you want to delete {existingDevContent.FullName}?");
+                Console.Write("Please confirm with Yes or No: ");
+                string userAnswer = Console.ReadLine().ToLower();
+                if(userAnswer == "yes")
+                {
+                    Console.Clear();
+                    _developerRepo.DeleteDevContent(existingDevContent);
+                    DisplayDeveloperInfo(existingDevContent);
+                    Console.WriteLine("This developer was removed.");
+                }
+                else if (userAnswer == "no")
+                {
+                    Console.WriteLine($"{existingDevContent.FullName} was not deleted.");
+                    PauseProgram();
+                    return;
+                }
+                else
+                {
+                    return;
+                }
                 Console.WriteLine("\nWould you like to remove another Developer? [Y or N]");
                 string answer = Console.ReadLine().ToUpper();
                 if (answer == "Y")
@@ -399,9 +415,22 @@ namespace DevTeams_Console
                     PauseProgram();
                     return;
                 }
-                _devTeamRepo.DeleteDevTeam(existingDevTeamContent);
-                Console.WriteLine($"\n{existingDevTeamContent.TeamName} was deleted with Id: {existingDevTeamContent.TeamId}");
-                Console.WriteLine("This Developer Team was removed.");
+                Console.WriteLine($"Are you sure you want to delete {existingDevTeamContent.TeamName}?");
+                Console.Write("Please confirm with Yes or No: ");
+                string userAnswer = Console.ReadLine().ToLower();
+                if (userAnswer == "yes")
+                {
+                    Console.Clear();
+                    _devTeamRepo.DeleteDevTeam(existingDevTeamContent);
+                    Console.WriteLine($"\n{existingDevTeamContent.TeamName} was deleted with Id: {existingDevTeamContent.TeamId}");
+                    Console.WriteLine("This Developer Team was removed.");
+                }
+                else
+                {
+                    Console.WriteLine($"{existingDevTeamContent.TeamName} was not deleted.");
+                    PauseProgram();
+                    return;
+                }
                 Console.WriteLine("\nWould you like to remove another Developer Team? [Y or N]");
                 string answer = Console.ReadLine().ToUpper();
                 if (answer == "Y")
