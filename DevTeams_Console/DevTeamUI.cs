@@ -263,7 +263,7 @@ namespace DevTeams_Console
                 Console.WriteLine($"Are you sure you want to delete {existingDevContent.FullName}?");
                 Console.Write("Please confirm with Yes or No: ");
                 string userAnswer = Console.ReadLine().ToLower();
-                if(userAnswer == "yes")
+                if (userAnswer == "yes")
                 {
                     Console.Clear();
                     _developerRepo.DeleteDevContent(existingDevContent);
@@ -315,18 +315,73 @@ namespace DevTeams_Console
         }
         private void AddDevTeams()
         {
+            Console.Clear();
+            Console.Write("Please enter the name for your Developer Team: ");
+            string userTeamName = Console.ReadLine();
+            Console.Write("Please enter the Id number for the Team: ");
+            int userTeamId = Convert.ToInt32(Console.ReadLine());
+            List<Developer> developers = new List<Developer>();
             bool addDevTeam = true;
             while (addDevTeam)
             {
+                Console.WriteLine("Would you like to add members to your team? [Y/N] ");
+                string userAddDevsYesOrNo = Console.ReadLine();
+                if(userAddDevsYesOrNo == "Y".ToUpper())
+                {
+                    Console.Clear();
+                    DisplayAllDeveloperInfo();
+                    Console.WriteLine("Please choose Developer by Id.");
+                    int userInputDevId = int.Parse(Console.ReadLine());
+                    Developer developer = _developerRepo.GetDeveloperById(userInputDevId);
+                    developers.Add(developer);
+                }
+                else
+                {
+                    addDevTeam = false;
+                }
+            }
+            DevTeam team = new DevTeam(userTeamName, userTeamId, developers);
+            _devTeamRepo.AddDevTeamContentToDirectory(team);
+            PauseProgram();
+        }
+        private void ShowAllDevTeams()
+        {
+            Console.Clear();
+            Console.WriteLine("The Developer Teams are listed below:\n");
+            DisplayAllDevTeams();
+            PauseProgram();
+        }
+        private void SelectDevelopersToAddToTeam()
+        {
+            bool addDevToTeams = true;
+            while (addDevToTeams)
+            {
                 Console.Clear();
-                DevTeam createDevTeam = new DevTeam();
-                Console.Write("Please enter the name for your Developer Team: ");
-                createDevTeam.TeamName = Console.ReadLine();
-                Console.Write("Please enter the Id number for the Team: ");
-                createDevTeam.TeamId = Convert.ToInt32(Console.ReadLine());
-                _devTeamRepo.AddDevTeamContentToDirectory(createDevTeam);
-                DisplayOneDevTeam(createDevTeam);
-                Console.WriteLine("\nWould you like to add another Developer Team? [Y or N]");
+                List<Developer> addDevs = _developerRepo.GetAllDeveloperInfo();
+                List<DevTeam> addDevTeam = _devTeamRepo.GetAllDevTeams();
+                Console.WriteLine("The list of the Developer Teams:\n");
+                DisplayAllDevTeams();
+                Console.Write("\nPlease enter the ID number for the Developer Team you would like to add Developers to: ");
+                int devTeamInput = Convert.ToInt32(Console.ReadLine());
+                DevTeam targetdevTeamContent = _devTeamRepo.GetOnlyOneDevTeam(devTeamInput);
+                if (targetdevTeamContent == null)
+                {
+                    Console.WriteLine("We are no able to find that Developer Team Id.");
+                    PauseProgram();
+                    return;
+                }
+                DisplayAllDeveloperInfo();
+                Console.WriteLine($"Please select the ID number for the Developer you want to add to {targetdevTeamContent.TeamName}");
+                int userInputEmployeeId = int.Parse(Console.ReadLine());
+                Developer existingDevContent = _developerRepo.GetDeveloperById(userInputEmployeeId);
+                if (existingDevContent == null)
+                {
+                    Console.WriteLine("We are not able to find that Employee Id.");
+                    PauseProgram();
+                    return;
+                }
+                _devTeamRepo.AddDevToDevTeam(devTeamInput);
+                Console.WriteLine("\nWould you like to update another Developer Team? [Y or N]");
                 string answer = Console.ReadLine().ToUpper();
                 if (answer == "Y")
                 {
@@ -334,19 +389,13 @@ namespace DevTeams_Console
                 }
                 else if (answer == "N")
                 {
-                    addDevTeam = false;
+                    addDevToTeams = false;
                 }
                 else
                 {
-                    addDevTeam = false;
+                    addDevToTeams = false;
                 }
             }
-            PauseProgram();
-        }
-        private void ShowAllDevTeams()
-        {
-            Console.Clear();
-            DisplayAllDevTeams();
             PauseProgram();
         }
         private void UpdateDevTeamById()
@@ -359,7 +408,7 @@ namespace DevTeams_Console
                 Console.WriteLine("\n\nPlease enter the Id number for the Developer Team you would like to update:");
                 int devTeamInput = Convert.ToInt32(Console.ReadLine());
                 DevTeam targetdevTeamContent = _devTeamRepo.GetOnlyOneDevTeam(devTeamInput);
-                if(targetdevTeamContent == null)
+                if (targetdevTeamContent == null)
                 {
                     Console.WriteLine("We are no able to find that Developer Team Id.");
                     PauseProgram();
@@ -490,6 +539,18 @@ namespace DevTeams_Console
         private void DisplayOneDevTeam(DevTeam devTeamInfo)
         {
             Console.WriteLine($"\n{devTeamInfo.TeamName} was created with Id: {devTeamInfo.TeamId}");
+        }
+        private void DisplayAllDevTeamWithDevs()
+        {
+            List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
+            foreach (DevTeam devTeamContent in listOfAllDevTeams)
+            {
+                Console.WriteLine($"\n{devTeamContent.TeamName}- Id: {devTeamContent.TeamId}");
+                foreach (Developer devInfo in devTeamContent.AddTeamMembers)
+                {
+                    Console.WriteLine($"{devInfo.FullName}- Id: {devInfo.IdNumber}");
+                }
+            }
         }
     }
 }

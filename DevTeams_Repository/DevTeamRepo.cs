@@ -30,10 +30,11 @@ namespace DevTeams_Repository
         }
         public bool UpdatingDevTeamInfo(DevTeam existingDevTeamInfo, DevTeam newDevTeamInfo)
         {
-            if(existingDevTeamInfo != null)
+            if(existingDevTeamInfo != null && newDevTeamInfo != null)
             {
                 existingDevTeamInfo.TeamId = newDevTeamInfo.TeamId;
                 existingDevTeamInfo.TeamName = newDevTeamInfo.TeamName;
+                existingDevTeamInfo.AddTeamMembers = newDevTeamInfo.AddTeamMembers;
                 return true;
             }
             else
@@ -45,6 +46,20 @@ namespace DevTeams_Repository
         {
             bool result = _contentDevTeam.Remove(existingDevTeamInfo);
             return result;
+        }
+        public bool AddDevToDevTeam(int addDevToTeam)
+        {
+            DevTeam newDevIdNum = GetOnlyOneDevTeam(addDevToTeam);
+            int firstTeamCount = _contentDevTeam.Count();
+            _contentDevTeam.Add(newDevIdNum);
+            if(_contentDevTeam.Count > firstTeamCount)
+            {
+                return true;
+            } 
+            else
+            {
+                return false;
+            }
         }
     }
 }
