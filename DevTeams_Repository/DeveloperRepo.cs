@@ -28,17 +28,6 @@ namespace DevTeams_Repository
             }
             return null;
         }
-        public Developer GetDeveloperByFullName(string fullName)
-        {
-            foreach (Developer devInfo in _developerList)
-            {
-                if (devInfo.FullName == fullName)
-                {
-                    return devInfo;
-                }
-            }
-            return null;
-        }
         public bool UpdateExistingDevContent(Developer existingDevContent, Developer newDevContent)
         {
             if(existingDevContent != null)

@@ -47,19 +47,5 @@ namespace DevTeams_Repository
             bool result = _contentDevTeam.Remove(existingDevTeamInfo);
             return result;
         }
-        public bool AddDevToDevTeam(int addDevToTeam)
-        {
-            DevTeam newDevIdNum = GetOnlyOneDevTeam(addDevToTeam);
-            int firstTeamCount = _contentDevTeam.Count();
-            _contentDevTeam.Add(newDevIdNum);
-            if(_contentDevTeam.Count > firstTeamCount)
-            {
-                return true;
-            } 
-            else
-            {
-                return false;
-            }
-        }
     }
 }
