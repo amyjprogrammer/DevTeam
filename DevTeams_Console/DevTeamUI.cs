@@ -448,25 +448,20 @@ namespace DevTeams_Console
             {
                 Console.Clear();
                 DisplayAllDevTeams();
-                Console.Write("\n\nPlease enter the Id number for the Developer Team you would like to update: ");
-                bool checkUserGaveWrongNum = true;
-                while (checkUserGaveWrongNum)
+
+                List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
+                if (listOfAllDevTeams.Count == 0)
                 {
-                    string stringInput = Console.ReadLine();
-                    if (!int.TryParse(stringInput, out int uniqueId))
-                    {
-                        Console.Write("Please enter a number: ");
-                        continue;
-                    }
-                    else
-                    {
-                        checkUserGaveWrongNum = false;
-                    }
-                    uniqueId = Int32.Parse(stringInput);
+                    updateDevTeams = false;
+                }
+                else
+                {
+                    Console.Write("\n\nPlease enter the Id number for the Developer Team you would like to update: ");
+                    var uniqueId = MakeSureUserEnteredANum();
                     DevTeam targetdevTeamContent = _devTeamRepo.GetOnlyOneDevTeam(uniqueId);
                     if (targetdevTeamContent == null)
                     {
-                        Console.WriteLine("\nWe are no able to find that Developer Team Id.");
+                        Console.WriteLine("\nWe are not able to find that Developer Team Id.");
                         PauseProgram();
                         return;
                     }
@@ -474,50 +469,54 @@ namespace DevTeams_Console
                     Console.WriteLine($"\nThe current team name is {targetdevTeamContent.TeamName}.");
                     Console.Write("Please enter the new name: ");
                     updatedevTeamContent.TeamName = Console.ReadLine();
-                    Console.WriteLine($"The current team id is {targetdevTeamContent.TeamId}");
+                    Console.WriteLine($"\nThe current team id is {targetdevTeamContent.TeamId}");
                     Console.Write("Please enter the new team Id: ");
+
                     bool checkUserInputNum = true;
                     while (checkUserInputNum)
                     {
-                        string stringUserInput = Console.ReadLine();
-                        if (!int.TryParse(stringUserInput, out int uniqueNumId))
-                        {
-                            Console.Write("Please enter a number: ");
-                            continue;
-                        }
-                        else
+                        //verifying the user entered a number
+                        updatedevTeamContent.TeamId = MakeSureUserEnteredANum();
+                        //making sure the user entered a unique number for the team
+                        bool checkIfGaveUniqueId = MakeSureGaveUniqueId(updatedevTeamContent.TeamId);
+                        if (checkIfGaveUniqueId == true)
                         {
                             checkUserInputNum = false;
                         }
-                        updatedevTeamContent.TeamId = Int32.Parse(stringUserInput);
-                        if (_devTeamRepo.UpdatingDevTeamInfo(targetdevTeamContent, updatedevTeamContent))
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Update successful");
-                            Console.WriteLine($"\nYou updated {updatedevTeamContent.TeamName} Id: {updatedevTeamContent.TeamId}");
-                        }
                         else
                         {
-                            Console.WriteLine("Update failed.");
-                        }
-                        Console.Write("\nWould you like to update another Developer Team? [Y or N]: ");
-                        string answer = Console.ReadLine().ToUpper();
-                        if (answer == "Y")
-                        {
-                            continue;
-                        }
-                        else if (answer == "N")
-                        {
-                            updateDevTeams = false;
-                        }
-                        else
-                        {
-                            updateDevTeams = false;
+                            Console.WriteLine("\nThe team Id must be unique.");
+                            Console.Write("Please enter another number: ");
                         }
                     }
+                    if (_devTeamRepo.UpdatingDevTeamInfo(targetdevTeamContent, updatedevTeamContent))
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Update successful");
+                        Console.WriteLine($"\nYou updated {updatedevTeamContent.TeamName} Id: {updatedevTeamContent.TeamId}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Update failed.");
+                    }
+                    Console.Write("\nWould you like to update another Developer Team? [Y or N]: ");
+                    string answer = Console.ReadLine().ToUpper();
+                    if (answer == "Y")
+                    {
+                        continue;
+                    }
+                    else if (answer == "N")
+                    {
+                        updateDevTeams = false;
+                    }
+                    else
+                    {
+                        updateDevTeams = false;
+                    }
                 }
-                PauseProgram();
+
             }
+            PauseProgram();
         }
         private void RemoveDevTeamById()
         {
@@ -526,21 +525,17 @@ namespace DevTeams_Console
             {
                 Console.Clear();
                 DisplayAllDevTeams();
-                Console.Write("\nPlease enter the Id number for the Developer Team you would like to remove: ");
-                bool checkUserGaveWrongNum = true;
-                while (checkUserGaveWrongNum)
+
+                List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
+                if (listOfAllDevTeams.Count == 0)
                 {
-                    string stringInput = Console.ReadLine();
-                    if (!int.TryParse(stringInput, out int uniqueId))
-                    {
-                        Console.Write("Please enter a number: ");
-                        continue;
-                    }
-                    else
-                    {
-                        checkUserGaveWrongNum = false;
-                    }
-                    int userInputDevTeamId = Int32.Parse(stringInput);
+                    removeDevTeam = false;
+                }
+                else
+                {
+                    Console.Write("\nPlease enter the Id number for the Developer Team you would like to remove: ");
+                    //verify user entered a number
+                    int userInputDevTeamId = MakeSureUserEnteredANum();
                     DevTeam existingDevTeamContent = _devTeamRepo.GetOnlyOneDevTeam(userInputDevTeamId);
                     if (existingDevTeamContent == null)
                     {
@@ -597,11 +592,18 @@ namespace DevTeams_Console
             Console.WriteLine("A list of all Developers\n" +
                "******************************************\n");
             List<Developer> listOfAllDevelopers = _developerRepo.GetAllDeveloperInfo();
-            int index = 1;
-            foreach (Developer devContent in listOfAllDevelopers)
+            if (listOfAllDevelopers.Count == 0)
             {
-                Console.WriteLine($"{index}. Full name: {devContent.FullName}: Id- {devContent.IdNumber}");
-                index++;
+                Console.WriteLine("Currently we don't have any Developers listed.");
+            }
+            else
+            {
+                int index = 1;
+                foreach (Developer devContent in listOfAllDevelopers)
+                {
+                    Console.WriteLine($"{index}. Full name: {devContent.FullName}: Id- {devContent.IdNumber}");
+                    index++;
+                }
             }
         }
         private bool CheckUserAnswerForTrueOrFalse(string userAnswer)
@@ -619,11 +621,18 @@ namespace DevTeams_Console
             Console.WriteLine("A list of all the Developer Teams\n" +
               "******************************************\n");
             List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
-            var index = 1;
-            foreach (DevTeam devTeamContent in listOfAllDevTeams)
+            if (listOfAllDevTeams.Count == 0)
             {
-                Console.WriteLine($"{index}. Team Name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}");
-                index++;
+                Console.WriteLine("Currently we don't have any Developer Teams listed.");
+            }
+            else
+            {
+                var index = 1;
+                foreach (DevTeam devTeamContent in listOfAllDevTeams)
+                {
+                    Console.WriteLine($"{index}. Team Name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}");
+                    index++;
+                }
             }
         }
         private void DisplayOneDevTeam(DevTeam devTeamInfo)
@@ -633,19 +642,26 @@ namespace DevTeams_Console
         private void DisplayAllDevTeamWithDevs()
         {
             Console.WriteLine("A List of all The Developer Teams and Members\n" +
-               "**************************************************");
+               "**************************************************\n");
             List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
-            int index = 1;
-            foreach (DevTeam devTeamContent in listOfAllDevTeams)
+            if (listOfAllDevTeams.Count == 0)
             {
-                Console.WriteLine($"\nTeam name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}\n" +
-                    $"Members in the team: \n");
-                if (devTeamContent.AddTeamMembers != null)
+                Console.WriteLine("Currently we don't have any Developer Teams listed.");
+            }
+            else
+            {
+                int index = 1;
+                foreach (DevTeam devTeamContent in listOfAllDevTeams)
                 {
-                    foreach (Developer devInfo in devTeamContent.AddTeamMembers)
+                    Console.WriteLine($"\nTeam name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}\n" +
+                        $"Members in the team: \n");
+                    if (devTeamContent.AddTeamMembers != null)
                     {
-                        Console.WriteLine($"{index}. {devInfo.FullName}- Id: {devInfo.IdNumber}");
-                        index++;
+                        foreach (Developer devInfo in devTeamContent.AddTeamMembers)
+                        {
+                            Console.WriteLine($"{index}. {devInfo.FullName}- Id: {devInfo.IdNumber}");
+                            index++;
+                        }
                     }
                 }
             }
@@ -668,6 +684,36 @@ namespace DevTeams_Console
                     name.IdNumber = uniqueId;
                     checkUserGaveWrongNum = false;
                 }
+            }
+        }
+        private int MakeSureUserEnteredANum()
+        {
+            bool checkUserGaveWrongNum = true;
+            while (checkUserGaveWrongNum)
+            {
+                string stringInput = Console.ReadLine();
+                if (!int.TryParse(stringInput, out int uniqueId))
+                {
+                    Console.Write("Please enter a number: ");
+                    continue;
+                }
+                else
+                {
+                    return Int32.Parse(stringInput);
+                }
+            }
+            return 0;
+        }
+        private bool MakeSureGaveUniqueId(int uniqueId)
+        {
+            DevTeam oneDevTeams = _devTeamRepo.GetOnlyOneDevTeam(uniqueId);
+            if (oneDevTeams != null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
     }
