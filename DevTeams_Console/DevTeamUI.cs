@@ -172,7 +172,7 @@ namespace DevTeams_Console
                 MakeSureUserEnteredANum(createDev);
 
                 Console.WriteLine("\nDoes this employee have Pluralsight access?");
-                Console.Write("Answer true or false: ");
+                Console.Write("Answer True or False: ");
                 string userAnswer = Console.ReadLine().ToLower();
                 createDev.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
                 _developerRepo.AddDeveloperToList(createDev);
@@ -252,7 +252,7 @@ namespace DevTeams_Console
                     MakeSureUserEnteredANum(updateDevContent);
 
                     Console.WriteLine($"\nCurrent Pluralsight Access: {existingDevContent.Pluralsight}");
-                    Console.Write("Please enter new access with true or false: ");
+                    Console.Write("Please enter new access with True or False: ");
                     string userAnswer = Console.ReadLine().ToLower();
                     updateDevContent.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
                     if (_developerRepo.UpdateExistingDevContent(existingDevContent, updateDevContent))
@@ -406,7 +406,7 @@ namespace DevTeams_Console
                     {
                         Console.Clear();
                         DisplayAllDeveloperInfo();
-                        Console.Write("\nPlease choose Developer by Id.");
+                        Console.Write("\nPlease choose Developer by Id: ");
 
                         //Make sure user gave a number
                         bool checkUserGaveWrongNum = true;
@@ -434,6 +434,7 @@ namespace DevTeams_Console
                 }
                 DevTeam team = new DevTeam(userTeamName, userTeamId, developers);
                 _devTeamRepo.AddDevTeamContentToDirectory(team);
+                DisplayOneDevTeam(team);
                 PauseProgram();
             }
         }
@@ -463,14 +464,14 @@ namespace DevTeams_Console
                 if (_devTeamRepo.UpdatingDevTeamInfo(targetdevTeamContent, updatedevTeamContent))
                 {
                     Console.Clear();
-                    Console.WriteLine("Update successful\n");
-                    DisplayOneDevTeam(updatedevTeamContent);
+                    Console.WriteLine("Update successful");
+                    Console.WriteLine($"\nYou updated {updatedevTeamContent.TeamName} Id: {updatedevTeamContent.TeamId}");
                 }
                 else
                 {
                     Console.WriteLine("Update failed.");
                 }
-                Console.WriteLine("\nWould you like to update another Developer Team? [Y or N]");
+                Console.Write("\nWould you like to update another Developer Team? [Y or N]: ");
                 string answer = Console.ReadLine().ToUpper();
                 if (answer == "Y")
                 {
@@ -494,32 +495,33 @@ namespace DevTeams_Console
             {
                 Console.Clear();
                 DisplayAllDevTeams();
-                Console.Write("\n\nPlease enter the Id number for the Developer Team you would like to remove: ");
+                Console.Write("\nPlease enter the Id number for the Developer Team you would like to remove: ");
                 int userInputDevTeamId = Convert.ToInt32(Console.ReadLine());
                 DevTeam existingDevTeamContent = _devTeamRepo.GetOnlyOneDevTeam(userInputDevTeamId);
                 if (existingDevTeamContent == null)
                 {
-                    Console.WriteLine("We are not able to find that Employee Id.");
+                    Console.WriteLine("\nWe are not able to find that Developer Team Id.");
                     PauseProgram();
                     return;
                 }
-                Console.WriteLine($"Are you sure you want to delete {existingDevTeamContent.TeamName}?");
+                Console.WriteLine($"\nAre you sure you want to delete team {existingDevTeamContent.TeamName}?");
                 Console.Write("Please confirm with Yes or No: ");
                 string userAnswer = Console.ReadLine().ToLower();
                 if (userAnswer == "yes")
                 {
                     Console.Clear();
                     _devTeamRepo.DeleteDevTeam(existingDevTeamContent);
+                    Console.WriteLine("This Developer Team was removed\n" +
+                        "***************************************\n.");
                     Console.WriteLine($"\n{existingDevTeamContent.TeamName} was deleted with Id: {existingDevTeamContent.TeamId}");
-                    Console.WriteLine("This Developer Team was removed.");
                 }
                 else
                 {
-                    Console.WriteLine($"{existingDevTeamContent.TeamName} was not deleted.");
+                    Console.WriteLine($"\nTeam {existingDevTeamContent.TeamName} was not deleted.");
                     PauseProgram();
                     return;
                 }
-                Console.WriteLine("\nWould you like to remove another Developer Team? [Y or N]");
+                Console.Write("\nWould you like to remove another Developer Team? [Y or N]: ");
                 string answer = Console.ReadLine().ToUpper();
                 if (answer == "Y")
                 {
@@ -561,7 +563,7 @@ namespace DevTeams_Console
         {
             while (userAnswer != "true" && userAnswer != "false")
             {
-                Console.WriteLine("Please enter either true or false: ");
+                Console.Write("Please enter either True or False: ");
                 userAnswer = Console.ReadLine().ToLower();
             }
             bool convertUserAnswer = Convert.ToBoolean(userAnswer);
@@ -569,6 +571,8 @@ namespace DevTeams_Console
         }
         private void DisplayAllDevTeams()
         {
+            Console.WriteLine("A list of all the Developer Teams\n" +
+              "******************************************\n");
             List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
             var index = 1;
             foreach (DevTeam devTeamContent in listOfAllDevTeams)
@@ -584,13 +588,13 @@ namespace DevTeams_Console
         private void DisplayAllDevTeamWithDevs()
         {
             Console.WriteLine("A List of all The Developer Teams and Members\n" +
-               "**************************************************\n\n");
+               "**************************************************");
             List<DevTeam> listOfAllDevTeams = _devTeamRepo.GetAllDevTeams();
             int index = 1;
             foreach (DevTeam devTeamContent in listOfAllDevTeams)
             {
-                Console.WriteLine($"Team name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}\n" +
-                    $"Members in the team: \n\n");
+                Console.WriteLine($"\nTeam name: {devTeamContent.TeamName}- Id: {devTeamContent.TeamId}\n" +
+                    $"Members in the team: \n");
                 foreach (Developer devInfo in devTeamContent.AddTeamMembers)
                 {
                     Console.WriteLine($"{index}. {devInfo.FullName}- Id: {devInfo.IdNumber}");
