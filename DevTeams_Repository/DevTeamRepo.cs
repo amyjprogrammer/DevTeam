@@ -47,5 +47,11 @@ namespace DevTeams_Repository
             bool result = _contentDevTeam.Remove(existingDevTeamInfo);
             return result;
         }
+        public void AddDevToTeam(int originalTeamId, Developer devInfo)
+        {
+            DevTeam devTeamInfo = GetOnlyOneDevTeam(originalTeamId);
+            devTeamInfo.AddTeamMembers.Add(devInfo);
+
+        }
     }
 }
