@@ -31,7 +31,9 @@ namespace DevTeams_Console
                         "2. Show Developer Team Options\n" +
                         "3. Exit"
                     );
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("\nPlease enter the number of your selection: ");
+                Console.ResetColor();
                 string userInput = Console.ReadLine();
 
                 switch (userInput)
@@ -46,9 +48,11 @@ namespace DevTeams_Console
                         isRunning = false;
                         break;
                     default:
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("\nPlease enter a valid number between 1-3.\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
+                        Console.ResetColor();
                         break;
                 }
             }
@@ -72,7 +76,9 @@ namespace DevTeams_Console
                         "5. Developers that need a Pluralsight license\n" +
                         "6. Main Menu\n"
                     );
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("Enter the number of your selection: ");
+                Console.ResetColor();
                 string userInput = Console.ReadLine();
 
                 switch (userInput)
@@ -97,9 +103,11 @@ namespace DevTeams_Console
                         RunMenu(false);
                         break;
                     default:
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("\nPlease enter a valid number between 1-6.\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
+                        Console.ResetColor();
                         break;
                 }
             }
@@ -123,7 +131,9 @@ namespace DevTeams_Console
                         "5. Delete Developer Team\n" +
                         "6. Main Menu\n"
                     );
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write("\nEnter the number of your selection: ");
+                Console.ResetColor();
                 string userInput = Console.ReadLine();
 
                 switch (userInput)
@@ -148,9 +158,11 @@ namespace DevTeams_Console
                         RunMenu(false);
                         break;
                     default:
-                        Console.WriteLine("\nPlease enter a valid number between 1-5.\n" +
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                        Console.WriteLine("\nPlease enter a valid number between 1-6.\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
+                        Console.ResetColor();
                         break;
                 }
             }
@@ -184,8 +196,10 @@ namespace DevTeams_Console
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("\nThe Developer Id must be unique.");
                         Console.Write("Please enter another number: ");
+                        Console.ResetColor();
                     }
                     createDev.IdNumber = userInputForNewDevId;
                 }
@@ -274,8 +288,10 @@ namespace DevTeams_Console
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine("\nThe Developer Id must be unique.");
                             Console.Write("Please enter another number: ");
+                            Console.ResetColor();
                         }
                         updateDevContent.IdNumber = userInputForNewDevId;
                     }
@@ -342,14 +358,17 @@ namespace DevTeams_Console
                             PauseProgram();
                             return;
                         }
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine($"\nAre you sure you want to delete {existingDevContent.FullName}?");
                         Console.Write("Please confirm with Yes or No: ");
+                        Console.ResetColor();
                         string userAnswer = Console.ReadLine().ToLower();
                         if (userAnswer == "yes")
                         {
                             Console.Clear();
                             _developerRepo.DeleteDevContent(existingDevContent);
-                            Console.WriteLine("This developer was removed.\n\n");
+                            Console.WriteLine("This developer was removed.\n" +
+                                "*******************************************\n");
                             DisplayDeveloperInfo(existingDevContent);
                         }
                         else if (userAnswer == "no")
@@ -550,8 +569,10 @@ namespace DevTeams_Console
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine("\nThe team Id must be unique.");
                             Console.Write("Please enter another number: ");
+                            Console.ResetColor();
                         }
                     }
                     if (_devTeamRepo.UpdatingDevTeamInfo(targetdevTeamContent, updatedevTeamContent))
@@ -608,8 +629,10 @@ namespace DevTeams_Console
                         PauseProgram();
                         return;
                     }
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nAre you sure you want to delete team {existingDevTeamContent.TeamName}?");
                     Console.Write("Please confirm with Yes or No: ");
+                    Console.ResetColor();
                     string userAnswer = Console.ReadLine().ToLower();
                     if (userAnswer == "yes")
                     {
@@ -732,25 +755,6 @@ namespace DevTeams_Console
             }
             PauseProgram();
         }
-        private void MakeSureUserEnteredANum(Developer name)
-        {
-            bool checkUserGaveWrongNum = true;
-            while (checkUserGaveWrongNum)
-            {
-                string stringInput = Console.ReadLine();
-                if (!int.TryParse(stringInput, out int uniqueId))
-                {
-                    Console.Write("Please enter a number: ");
-                    continue;
-                }
-                else
-                {
-                    uniqueId = Int32.Parse(stringInput);
-                    name.IdNumber = uniqueId;
-                    checkUserGaveWrongNum = false;
-                }
-            }
-        }
         private int MakeSureUserEnteredANum()
         {
             bool checkUserGaveWrongNum = true;
@@ -759,7 +763,9 @@ namespace DevTeams_Console
                 string stringInput = Console.ReadLine();
                 if (!int.TryParse(stringInput, out int uniqueId))
                 {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.Write("Please enter a number: ");
+                    Console.ResetColor();
                     continue;
                 }
                 else
