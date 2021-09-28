@@ -172,8 +172,23 @@ namespace DevTeams_Console
                 createDev.LastName = Console.ReadLine();
                 Console.Write("\nPlease enter the unique ID number: ");
 
-                //Making sure user entered a number
-                MakeSureUserEnteredANum(createDev);
+                //Making sure user entered a unique number
+                bool checkUserGaveWrongNum = true;
+                while (checkUserGaveWrongNum)
+                {
+                    int userInputForNewDevId = MakeSureUserEnteredANum();
+                    bool verifyIfUniqueId = CheckIfDevNumIsUnique(userInputForNewDevId);
+                    if (verifyIfUniqueId == true)
+                    {
+                        checkUserGaveWrongNum = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nThe Developer Id must be unique.");
+                        Console.Write("Please enter another number: ");
+                    }
+                    createDev.IdNumber = userInputForNewDevId;
+                }
 
                 Console.WriteLine("\nDoes this employee have Pluralsight access?");
                 Console.Write("Answer True or False: ");
@@ -218,70 +233,80 @@ namespace DevTeams_Console
             {
                 Console.Clear();
                 DisplayAllDeveloperInfo();
-                Console.Write("\n\nPlease enter the Id number for the Employee you would like to update: ");
 
-                int uniqueId = MakeSureUserEnteredANum();
-                Developer existingDevContent = _developerRepo.GetDeveloperById(uniqueId);
-                if (existingDevContent == null)
+                //double check if any employees in the list
+                List<Developer> listOfAllDevs = _developerRepo.GetAllDeveloperInfo();
+                if (listOfAllDevs.Count == 0)
                 {
-                    Console.WriteLine("We are not able to find that Employee Id.");
-                    PauseProgram();
-                    return;
+                    updateEmployee = false;
                 }
-                Developer updateDevContent = new Developer();
-                Console.WriteLine($"\nCurrent Employee First Name: {existingDevContent.FirstName}");
-                Console.Write("Please enter the new First Name: ");
-                updateDevContent.FirstName = Console.ReadLine();
-                Console.WriteLine($"\nCurrent Employee Last Name: {existingDevContent.LastName}");
-                Console.Write("Please enter the new Last Name: ");
-                updateDevContent.LastName = Console.ReadLine();
-                Console.WriteLine($"\n Current Employee Id Number: {existingDevContent.IdNumber}");
-                Console.Write("Please enter the new Id Number: ");
-
-                //Making sure user entered a number
-                bool checkUserGaveWrongNum = true;
-                while (checkUserGaveWrongNum)
+                else
                 {
-                    int userInputForNewDevId = MakeSureUserEnteredANum();
-                    bool verifyIfUniqueId = CheckIfDevNumIsUnique(userInputForNewDevId);
-                    if (verifyIfUniqueId == true)
+                    Console.Write("\n\nPlease enter the Id number for the Employee you would like to update: ");
+
+                    int uniqueId = MakeSureUserEnteredANum();
+                    Developer existingDevContent = _developerRepo.GetDeveloperById(uniqueId);
+                    if (existingDevContent == null)
                     {
-                        checkUserGaveWrongNum = false;
+                        Console.WriteLine("We are not able to find that Employee Id.");
+                        PauseProgram();
+                        return;
+                    }
+                    Developer updateDevContent = new Developer();
+                    Console.WriteLine($"\nCurrent Employee First Name: {existingDevContent.FirstName}");
+                    Console.Write("Please enter the new First Name: ");
+                    updateDevContent.FirstName = Console.ReadLine();
+                    Console.WriteLine($"\nCurrent Employee Last Name: {existingDevContent.LastName}");
+                    Console.Write("Please enter the new Last Name: ");
+                    updateDevContent.LastName = Console.ReadLine();
+                    Console.WriteLine($"\nCurrent Employee Id Number: {existingDevContent.IdNumber}");
+                    Console.Write("Please enter the new Id Number: ");
+
+                    //Making sure user entered a unique number
+                    bool checkUserGaveWrongNum = true;
+                    while (checkUserGaveWrongNum)
+                    {
+                        int userInputForNewDevId = MakeSureUserEnteredANum();
+                        bool verifyIfUniqueId = CheckIfDevNumIsUnique(userInputForNewDevId);
+                        if (verifyIfUniqueId == true)
+                        {
+                            checkUserGaveWrongNum = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nThe Developer Id must be unique.");
+                            Console.Write("Please enter another number: ");
+                        }
+                        updateDevContent.IdNumber = userInputForNewDevId;
+                    }
+                    Console.WriteLine($"\nCurrent Pluralsight Access: {existingDevContent.Pluralsight}");
+                    Console.Write("Please enter new access with True or False: ");
+                    string userAnswer = Console.ReadLine().ToLower();
+                    updateDevContent.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
+                    if (_developerRepo.UpdateExistingDevContent(existingDevContent, updateDevContent))
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Update successful\n");
+                        DisplayDeveloperInfo(updateDevContent);
                     }
                     else
                     {
-                        Console.WriteLine("\nThe Developer Id must be unique.");
-                        Console.Write("Please enter another number: ");
+                        Console.WriteLine("Update Failed.");
                     }
-                    updateDevContent.IdNumber = userInputForNewDevId;
-                }
-                Console.WriteLine($"\nCurrent Pluralsight Access: {existingDevContent.Pluralsight}");
-                Console.Write("Please enter new access with True or False: ");
-                string userAnswer = Console.ReadLine().ToLower();
-                updateDevContent.Pluralsight = CheckUserAnswerForTrueOrFalse(userAnswer);
-                if (_developerRepo.UpdateExistingDevContent(existingDevContent, updateDevContent))
-                {
-                    Console.Clear();
-                    Console.WriteLine("Update successful\n");
-                    DisplayDeveloperInfo(updateDevContent);
-                }
-                else
-                {
-                    Console.WriteLine("Update Failed.");
-                }
-                Console.Write("\nWould you like to update another Developer? [Y or N]: ");
-                string answer = Console.ReadLine().ToUpper();
-                if (answer == "Y")
-                {
-                    continue;
-                }
-                else if (answer == "N")
-                {
-                    updateEmployee = false;
-                }
-                else
-                {
-                    updateEmployee = false;
+                    Console.Write("\nWould you like to update another Developer? [Y or N]: ");
+                    string answer = Console.ReadLine().ToUpper();
+                    if (answer == "Y")
+                    {
+                        continue;
+                    }
+                    else if (answer == "N")
+                    {
+                        updateEmployee = false;
+                    }
+                    else
+                    {
+                        updateEmployee = false;
+                    }
                 }
             }
 
